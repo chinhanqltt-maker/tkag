@@ -85,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
                   Chi Cục QLTT Tỉnh An Giang
                 </span>
                 <span className="hidden sm:inline-block rounded bg-blue-700/80 px-1.5 py-0.2 text-[10px] font-medium text-blue-100">
-                  Phòng NV-TH
+                  Phòng TCHC
                 </span>
               </div>
               <h1 className="text-sm sm:text-base font-extrabold tracking-tight text-white leading-tight">

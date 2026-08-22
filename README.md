@@ -67,7 +67,7 @@ Hệ thống Dashboard web hiện đại thay thế các tập lệnh Google App
 
 ### 6. Trung Tâm Xuất Báo Cáo & In Ấn Hành Chính
 - Tải file Excel (.xlsx) chuẩn biểu mẫu cho tất cả các Sheet.
-- Mẫu in khổ A4 ngang chuẩn thể thức văn bản hành chính nhà nước (Quốc hiệu tiêu ngữ, Cơ quan ban hành, Tiêu đề, Chữ ký Người lập biểu Võ Chí Nhân, Trưởng phòng Nghiệp vụ, Chi cục trưởng).
+- Mẫu in khổ A4 ngang chuẩn thể thức văn bản hành chính nhà nước (Quốc hiệu tiêu ngữ, Cơ quan ban hành, Tiêu đề, Chữ ký Người lập biểu Võ Chí Nhân, Trưởng phòng TCHC, Chi cục trưởng).
 
 ---
 

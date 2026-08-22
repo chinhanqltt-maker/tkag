@@ -159,7 +159,7 @@ export const ExportView: React.FC<ExportViewProps> = ({
         <div className="grid grid-cols-2 text-center text-xs mb-6 print-header">
           <div>
             <p className="font-bold uppercase tracking-wider">CHI CỤC QUẢN LÝ THỊ TRƯỜNG TỈNH AN GIANG</p>
-            <p className="font-bold">PHÒNG NGHIỆP VỤ - TỔNG HỢP</p>
+            <p className="font-bold">PHÒNG TỔ CHỨC - HÀNH CHÍNH</p>
             <div className="w-24 h-0.5 bg-black mx-auto mt-1" />
           </div>
           <div>
@@ -257,7 +257,7 @@ export const ExportView: React.FC<ExportViewProps> = ({
             </div>
           </div>
           <div className="space-y-16">
-            <p className="font-bold uppercase">TRƯỞNG PHÒNG NV-TH</p>
+            <p className="font-bold uppercase">TRƯỞNG PHÒNG TCHC</p>
             <p className="font-bold">(Ký, ghi rõ họ tên)</p>
           </div>
           <div className="space-y-16">

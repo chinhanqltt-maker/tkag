@@ -4,7 +4,7 @@ cd /d "%~dp0"
 set PATH=C:\Program Files\nodejs;%PATH%
 
 echo =======================================================================
-echo    CHI CUC QUAN LY THI TRUONG TINH AN GIANG - PHONG NV-TH
+echo    CHI CUC QUAN LY THI TRUONG TINH AN GIANG - PHONG TCHC
 echo    CAI DAT HE THONG DASHBOARD VA APP TRA CUU QLTT
 echo =======================================================================
 echo.
@@ -25,7 +25,7 @@ npm install
 
 echo.
 echo [*] Cai dat hoan tat! Dang khoi dong Dashboard...
-start http://localhost:3000
-npm run dev
+start http://localhost:3001
+call npm run dev
 
 pause

@@ -4,7 +4,7 @@ cd /d "%~dp0"
 set PATH=C:\Program Files\nodejs;%LOCALAPPDATA%\Programs\node;%APPDATA%\npm;%PATH%
 
 echo =======================================================================
-echo    CHI CUC QUAN LY THI TRUONG TINH AN GIANG - PHONG NV-TH
+echo    CHI CUC QUAN LY THI TRUONG TINH AN GIANG - PHONG TCHC
 echo    HE THONG DASHBOARD TONG HOP BAO CAO & QUAN LY CO SO KINH DOANH
 echo =======================================================================
 echo.
