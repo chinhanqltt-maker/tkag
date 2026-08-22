@@ -1,0 +1,12 @@
+node_modules
+dist
+dist-ssr
+*.local
+.vscode
+.idea
+.DS_Store
+*.log
+.env
+.env.*
+*.xlsx
+sheet_analysis.json
