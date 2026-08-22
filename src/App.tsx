@@ -4,6 +4,7 @@ import { findDuplicates } from './services/dataAggregator';
 import { FilterState, Facility } from './types';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
+import { AuthGate, logoutUser } from './components/AuthGate';
 import { PwaInstallPrompt } from './components/PwaInstallPrompt';
 import { SyncModal } from './components/SyncModal';
 import { DuplicateModal } from './components/DuplicateModal';
@@ -27,6 +28,14 @@ export function App() {
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState<boolean>(false);
   const [inspectingFacility, setInspectingFacility] = useState<Facility | null>(null);
   const [facilityFilterOverride, setFacilityFilterOverride] = useState<Partial<FilterState>>({});
+  const [authSessionId, setAuthSessionId] = useState<number>(0);
+
+  const handleLogout = () => {
+    if (window.confirm('Bạn có chắc muốn khoá hệ thống / đăng xuất?')) {
+      logoutUser();
+      setAuthSessionId(prev => prev + 1);
+    }
+  };
 
   // Sync Dark mode with DOM
   useEffect(() => {
@@ -59,23 +68,25 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
-      {/* PWA Install Banner on mobile browsers */}
-      <PwaInstallPrompt />
+    <AuthGate key={authSessionId}>
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
+        {/* PWA Install Banner on mobile browsers */}
+        <PwaInstallPrompt />
 
-      {/* Top Header */}
-      <Header
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
-        onOpenSync={() => setIsSyncModalOpen(true)}
-        onDataLoaded={newStore => setStore(newStore)}
-        isDarkMode={isDarkMode}
-        setIsDarkMode={setIsDarkMode}
-        duplicateCount={duplicateGroups.length}
-        onOpenDuplicates={() => setIsDuplicateModalOpen(true)}
-        totalFacilities={store.facilities.length}
-        lastUpdated={store.lastUpdated}
-      />
+        {/* Top Header */}
+        <Header
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          onOpenSync={() => setIsSyncModalOpen(true)}
+          onDataLoaded={newStore => setStore(newStore)}
+          isDarkMode={isDarkMode}
+          setIsDarkMode={setIsDarkMode}
+          duplicateCount={duplicateGroups.length}
+          onOpenDuplicates={() => setIsDuplicateModalOpen(true)}
+          totalFacilities={store.facilities.length}
+          lastUpdated={store.lastUpdated}
+          onLogout={handleLogout}
+        />
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-4 lg:px-8 pt-4 sm:pt-6">
@@ -155,11 +166,12 @@ export function App() {
         />
       )}
 
-      {/* Inspecting Facility Modal */}
-      <FacilityModal
-        facility={inspectingFacility}
-        onClose={() => setInspectingFacility(null)}
-      />
-    </div>
+        {/* Inspecting Facility Modal */}
+        <FacilityModal
+          facility={inspectingFacility}
+          onClose={() => setInspectingFacility(null)}
+        />
+      </div>
+    </AuthGate>
   );
 }

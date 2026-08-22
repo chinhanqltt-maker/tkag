@@ -14,7 +14,8 @@ import {
   ShieldCheck,
   Search,
   Smartphone,
-  Sparkles
+  Sparkles,
+  Lock
 } from 'lucide-react';
 import { parseUploadedExcel } from '../services/dataLoader';
 import { AppDataStore } from '../services/dataLoader';
@@ -30,6 +31,7 @@ interface HeaderProps {
   onOpenDuplicates: () => void;
   totalFacilities: number;
   lastUpdated: string;
+  onLogout?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -42,7 +44,8 @@ export const Header: React.FC<HeaderProps> = ({
   duplicateCount,
   onOpenDuplicates,
   totalFacilities,
-  lastUpdated
+  lastUpdated,
+  onLogout
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -141,6 +144,17 @@ export const Header: React.FC<HeaderProps> = ({
             >
               {isDarkMode ? <Sun className="h-3.5 w-3.5 text-amber-300" /> : <Moon className="h-3.5 w-3.5 text-blue-200" />}
             </button>
+
+            {/* Lock / Logout Button */}
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="rounded-lg bg-blue-950/60 p-1.5 text-amber-300 hover:bg-red-900/60 hover:text-red-200 transition-colors"
+                title="Khóa hệ thống / Đăng xuất"
+              >
+                <Lock className="h-3.5 w-3.5" />
+              </button>
+            )}
           </div>
         </div>
       </div>

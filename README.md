@@ -9,6 +9,13 @@ Hệ thống Dashboard web hiện đại thay thế các tập lệnh Google App
 
 ---
 
+## 🔐 Mật Khẩu Truy Cập Nội Bộ
+
+- **Mật khẩu truy cập**: `qlttag`
+- *(Sau khi nhập đúng mật khẩu, hệ thống sẽ mở khoá toàn bộ dữ liệu. Có thể chọn "Ghi nhớ trên thiết bị này" hoặc bấm nút Khóa trên thanh tiêu đề để đăng xuất/khóa lại bất kỳ lúc nào)*
+
+---
+
 ## 🚀 Hướng Dẫn Khởi Chạy Nhanh
 
 1. **Khởi chạy bằng 1 click**:
