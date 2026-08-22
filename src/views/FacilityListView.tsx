@@ -8,6 +8,7 @@ import {
 } from '../services/dataAggregator';
 import { exportFacilitiesToExcel } from '../services/excelExporter';
 import { FacilityModal } from '../components/FacilityModal';
+import { SearchableSelect } from '../components/SearchableSelect';
 import {
   Building2,
   User,
@@ -186,17 +187,14 @@ export const FacilityListView: React.FC<FacilityListViewProps> = ({
         {/* Dropdown Filters Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 pt-2 border-t border-slate-100 dark:border-slate-800/80">
           {/* Team */}
-          <div>
-            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Đội QLTT</label>
-            <select
-              value={filter.team}
-              onChange={e => handleFilterChange('team', e.target.value)}
-              className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500"
-            >
-              <option value="ALL">Tất cả Đội ({TEAM_LIST.length})</option>
-              {TEAM_LIST.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
-          </div>
+          <SearchableSelect
+            label="Đội QLTT"
+            options={TEAM_LIST}
+            value={filter.team}
+            onChange={val => handleFilterChange('team', val)}
+            allLabel={`Tất cả Đội (${TEAM_LIST.length})`}
+            placeholder="Gõ tìm Đội..."
+          />
 
           {/* Type */}
           <div>
@@ -213,30 +211,24 @@ export const FacilityListView: React.FC<FacilityListViewProps> = ({
           </div>
 
           {/* Industry */}
-          <div>
-            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Ngành hàng</label>
-            <select
-              value={filter.industry}
-              onChange={e => handleFilterChange('industry', e.target.value)}
-              className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500"
-            >
-              <option value="ALL">Tất cả ngành nghề</option>
-              {INDUSTRY_LIST.map(ind => <option key={ind} value={ind}>{ind}</option>)}
-            </select>
-          </div>
+          <SearchableSelect
+            label="Ngành hàng"
+            options={INDUSTRY_LIST}
+            value={filter.industry}
+            onChange={val => handleFilterChange('industry', val)}
+            allLabel="Tất cả ngành nghề"
+            placeholder="Gõ tên ngành..."
+          />
 
           {/* Ward */}
-          <div>
-            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Phường / Xã</label>
-            <select
-              value={filter.ward}
-              onChange={e => handleFilterChange('ward', e.target.value)}
-              className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500"
-            >
-              <option value="ALL">Tất cả Phường/Xã ({distinctWards.length})</option>
-              {distinctWards.map(w => <option key={w} value={w}>{w}</option>)}
-            </select>
-          </div>
+          <SearchableSelect
+            label="Phường / Xã"
+            options={distinctWards}
+            value={filter.ward}
+            onChange={val => handleFilterChange('ward', val)}
+            allLabel={`Tất cả Phường/Xã (${distinctWards.length})`}
+            placeholder="Gõ tên Xã / Phường..."
+          />
 
           {/* Survey Type */}
           <div>
@@ -253,17 +245,14 @@ export const FacilityListView: React.FC<FacilityListViewProps> = ({
           </div>
 
           {/* Officer */}
-          <div>
-            <label className="block text-[11px] font-semibold text-slate-500 mb-1">Cán bộ phụ trách</label>
-            <select
-              value={filter.officer}
-              onChange={e => handleFilterChange('officer', e.target.value)}
-              className="w-full px-2.5 py-1.5 text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-blue-500"
-            >
-              <option value="ALL">Tất cả cán bộ ({distinctOfficers.length})</option>
-              {distinctOfficers.map(off => <option key={off} value={off}>{off}</option>)}
-            </select>
-          </div>
+          <SearchableSelect
+            label="Cán bộ phụ trách"
+            options={distinctOfficers}
+            value={filter.officer}
+            onChange={val => handleFilterChange('officer', val)}
+            allLabel={`Tất cả cán bộ (${distinctOfficers.length})`}
+            placeholder="Gõ tên cán bộ (Nhân, Tuấn...)"
+          />
         </div>
 
         {/* Filter summary status */}
