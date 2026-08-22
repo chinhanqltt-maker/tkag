@@ -4,7 +4,7 @@ import { findDuplicates } from './services/dataAggregator';
 import { FilterState, Facility } from './types';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { AuthGate, logoutUser } from './components/AuthGate';
+import { AuthGate, logoutUser, isUserAuthenticated } from './components/AuthGate';
 import { PwaInstallPrompt } from './components/PwaInstallPrompt';
 import { SyncModal } from './components/SyncModal';
 import { DuplicateModal } from './components/DuplicateModal';
@@ -28,12 +28,12 @@ export function App() {
   const [isDuplicateModalOpen, setIsDuplicateModalOpen] = useState<boolean>(false);
   const [inspectingFacility, setInspectingFacility] = useState<Facility | null>(null);
   const [facilityFilterOverride, setFacilityFilterOverride] = useState<Partial<FilterState>>({});
-  const [authSessionId, setAuthSessionId] = useState<number>(0);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => isUserAuthenticated());
 
   const handleLogout = () => {
     if (window.confirm('Bạn có chắc muốn khoá hệ thống / đăng xuất?')) {
       logoutUser();
-      setAuthSessionId(prev => prev + 1);
+      setIsAuthenticated(false);
     }
   };
 
@@ -67,9 +67,12 @@ export function App() {
     setActiveTab('facilities');
   };
 
+  if (!isAuthenticated) {
+    return <AuthGate onAuthenticated={() => setIsAuthenticated(true)} />;
+  }
+
   return (
-    <AuthGate key={authSessionId}>
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
         {/* PWA Install Banner on mobile browsers */}
         <PwaInstallPrompt />
 
@@ -172,6 +175,5 @@ export function App() {
           onClose={() => setInspectingFacility(null)}
         />
       </div>
-    </AuthGate>
   );
 }
