@@ -5,8 +5,19 @@ export const TEAM_LIST = [
   'Đội 7', 'Đội 8', 'Đội 9', 'Đội 10', 'Đội 11', 'Đội 12'
 ];
 
+export function removeVietnameseAccents(str: string): string {
+  if (!str) return '';
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase();
+}
+
 export function filterFacilities(facilities: Facility[], filter: FilterState): Facility[] {
   const searchLower = filter.search.trim().toLowerCase();
+  const searchTokens = searchLower ? searchLower.split(/\s+/).filter(Boolean) : [];
 
   return facilities.filter(item => {
     // 1. Team filter
@@ -57,20 +68,33 @@ export function filterFacilities(facilities: Facility[], filter: FilterState): F
       if (!offArea.includes(targetOff) && !offInput.includes(targetOff)) return false;
     }
 
-    // 9. Search string
-    if (searchLower) {
-      const matchSearch =
-        (item.registeredName && item.registeredName.toLowerCase().includes(searchLower)) ||
-        (item.signboardName && item.signboardName.toLowerCase().includes(searchLower)) ||
-        (item.representative && item.representative.toLowerCase().includes(searchLower)) ||
-        (item.mst && item.mst.toLowerCase().includes(searchLower)) ||
-        (item.cccd && item.cccd.toLowerCase().includes(searchLower)) ||
-        (item.phone && item.phone.toLowerCase().includes(searchLower)) ||
-        (item.fullAddress && item.fullAddress.toLowerCase().includes(searchLower)) ||
-        (item.bLicenseNo && item.bLicenseNo.toLowerCase().includes(searchLower)) ||
-        (item.businessLines && item.businessLines.toLowerCase().includes(searchLower));
+    // 9. Smart Multi-token & Unaccented Search
+    if (searchTokens.length > 0) {
+      const rawText = [
+        item.registeredName || '',
+        item.signboardName || '',
+        item.representative || '',
+        item.mst || '',
+        item.cccd || '',
+        item.phone || '',
+        item.fullAddress || '',
+        item.ward || '',
+        item.team || '',
+        item.bLicenseNo || '',
+        item.businessLines || '',
+        item.officerArea || '',
+        item.officerInput || '',
+        (item.industries || []).join(' ')
+      ].join(' ').toLowerCase();
 
-      if (!matchSearch) return false;
+      const normalizedText = removeVietnameseAccents(rawText);
+
+      const allTokensMatch = searchTokens.every(token => {
+        const tokenNormalized = removeVietnameseAccents(token);
+        return rawText.includes(token) || normalizedText.includes(tokenNormalized);
+      });
+
+      if (!allTokensMatch) return false;
     }
 
     return true;
