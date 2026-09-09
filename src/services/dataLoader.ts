@@ -164,89 +164,188 @@ export function parseWorkbookArrayBuffer(
 
   // 3. Facilities
   const facilities: Facility[] = [];
-  const okWs = wb.Sheets['OK'];
-  if (okWs) {
-    const okData: any[][] = XLSX.utils.sheet_to_json(okWs, { header: 1 });
-    for (let r = 2; r < okData.length; r++) {
-      const row = okData[r];
-      if (!row || row.length === 0) continue;
+  const teamSheets = [
+    { sheet: 'D2', team: 'Đội 2' },
+    { sheet: 'D3', team: 'Đội 3' },
+    { sheet: 'D4', team: 'Đội 4' },
+    { sheet: 'D5', team: 'Đội 5' },
+    { sheet: 'D6', team: 'Đội 6' },
+    { sheet: 'D7', team: 'Đội 7' },
+    { sheet: 'D8', team: 'Đội 8' },
+    { sheet: 'D9', team: 'Đội 9' },
+    { sheet: 'D10', team: 'Đội 10' },
+    { sheet: 'D11', team: 'Đội 11' },
+    { sheet: 'D12', team: 'Đội 12' },
+  ];
 
-      let team = '';
-      for (let c = row.length - 1; c >= 0; c--) {
-        const val = String(row[c] || '');
-        if (val.match(/^Đội\s*\d+$/i)) {
-          team = val.trim();
-          break;
+  const hasTeamSheets = teamSheets.some(ts => !!wb.Sheets[ts.sheet]);
+  let idCounter = 1;
+
+  if (hasTeamSheets) {
+    teamSheets.forEach(({ sheet, team }) => {
+      const ws = wb.Sheets[sheet];
+      if (!ws) return;
+      const data: any[][] = XLSX.utils.sheet_to_json(ws, { header: 1 });
+      for (let r = 2; r < data.length; r++) {
+        const row = data[r];
+        if (!row || row.length === 0) continue;
+
+        const signboardName = String(row[2] || '').trim();
+        const registeredName = String(row[3] || '').trim();
+        const representative = String(row[4] || '').trim();
+        const fullAddress = row[32] ? String(row[32]).trim() : '';
+        const mst = row[13] ? String(row[13]).trim() : '';
+        const facilityTypeRaw = String(row[1] || '').trim();
+
+        if (!registeredName && !signboardName && !representative && !fullAddress && !mst) continue;
+
+        const facilityType = facilityTypeRaw.toLowerCase().includes('tổ chức') || facilityTypeRaw.toLowerCase().includes('doanh nghiệp')
+          ? 'Tổ chức'
+          : 'Cá nhân';
+
+        const activeIndustries: string[] = [];
+        for (let c = 40; c < 80; c++) {
+          const val = row[c];
+          if (val && (String(val).toLowerCase() === 'x' || String(val) === '1' || val === true || typeof val === 'number')) {
+            const indName = (data[0] && data[0][c]) || industryCols[c - 40];
+            if (indName) activeIndustries.push(String(indName).trim());
+          }
         }
+
+        facilities.push({
+          id: idCounter++,
+          stt: row[0] || idCounter,
+          facilityType,
+          rawType: facilityTypeRaw,
+          signboardName,
+          registeredName: registeredName || signboardName || '(Chưa có tên)',
+          representative,
+          position: String(row[5] || '').trim(),
+          birthDate: row[6] ? String(row[6]).trim() : '',
+          cccd: row[7] ? String(row[7]).trim() : '',
+          cccdDate: row[8] ? String(row[8]).trim() : '',
+          cccdPlace: row[9] ? String(row[9]).trim() : '',
+          phone: row[10] ? String(row[10]).trim() : '',
+          businessLines: row[11] ? String(row[11]).trim() : '',
+          mst,
+          bLicenseNo: row[14] ? String(row[14]).trim() : '',
+          bLicenseBranch: row[15] ? String(row[15]).trim() : '',
+          bLicenseLoc: row[16] ? String(row[16]).trim() : '',
+          bLicenseDate: row[17] ? String(row[17]).trim() : '',
+          bLicensePlace: row[18] ? String(row[18]).trim() : '',
+          condCertNo: row[19] ? String(row[19]).trim() : '',
+          condCertDate: row[20] ? String(row[20]).trim() : '',
+          condCertPlace: row[21] ? String(row[21]).trim() : '',
+          condCertExp: row[22] ? String(row[22]).trim() : '',
+          pracLicenseNo: row[23] ? String(row[23]).trim() : '',
+          pracLicenseDate: row[24] ? String(row[24]).trim() : '',
+          pracLicensePlace: row[25] ? String(row[25]).trim() : '',
+          pracLicenseExp: row[26] ? String(row[26]).trim() : '',
+          otherLicenseName: row[27] ? String(row[27]).trim() : '',
+          otherLicenseNo: row[28] ? String(row[28]).trim() : '',
+          otherLicenseDate: row[29] ? String(row[29]).trim() : '',
+          otherLicensePlace: row[30] ? String(row[30]).trim() : '',
+          otherLicenseExp: row[31] ? String(row[31]).trim() : '',
+          fullAddress,
+          streetNo: row[33] ? String(row[33]).trim() : '',
+          hamlet: row[34] ? String(row[34]).trim() : '',
+          ward: row[35] ? String(row[35]).trim() : '',
+          surveyWeek: row[36] ? parseInt(row[36], 10) || null : null,
+          surveyType: row[37] ? String(row[37]).trim() : '',
+          officerArea: row[38] ? String(row[38]).trim() : '',
+          officerInput: row[39] ? String(row[39]).trim() : '',
+          industries: activeIndustries,
+          note: row[80] ? String(row[80]).trim() : '',
+          status: row[81] ? String(row[81]).trim() || 'Đang hoạt động' : 'Đang hoạt động',
+          team
+        });
       }
-      if (!team) {
-        if (String(row[83] || '').startsWith('Đội')) team = String(row[83]);
-      }
+    });
+  } else {
+    const okWs = wb.Sheets['OK'];
+    if (okWs) {
+      const okData: any[][] = XLSX.utils.sheet_to_json(okWs, { header: 1 });
+      for (let r = 2; r < okData.length; r++) {
+        const row = okData[r];
+        if (!row || row.length === 0) continue;
 
-      const facilityType = String(row[1] || '').trim();
-      const signboardName = String(row[2] || '').trim();
-      const registeredName = String(row[3] || '').trim();
-      const representative = String(row[4] || '').trim();
-      const fullAddress = row[32] ? String(row[32]).trim() : '';
-
-      if (!registeredName && !representative && !fullAddress) continue;
-
-      const activeIndustries: string[] = [];
-      for (let c = 40; c < 80; c++) {
-        const val = row[c];
-        if (val && (String(val).toLowerCase() === 'x' || String(val) === '1' || val === true)) {
-          const indName = okData[0][c];
-          if (indName) activeIndustries.push(String(indName).trim());
+        let team = '';
+        for (let c = row.length - 1; c >= 0; c--) {
+          const val = String(row[c] || '');
+          if (val.match(/^Đội\s*\d+$/i)) {
+            team = val.trim();
+            break;
+          }
         }
-      }
+        if (!team) {
+          if (String(row[83] || '').startsWith('Đội')) team = String(row[83]);
+        }
 
-      facilities.push({
-        id: r - 1,
-        stt: row[0] || (r - 1),
-        facilityType: facilityType.includes('Tổ chức') ? 'Tổ chức' : 'Cá nhân',
-        rawType: facilityType,
-        signboardName,
-        registeredName: registeredName || signboardName || '(Chưa có tên)',
-        representative,
-        position: String(row[5] || '').trim(),
-        birthDate: row[6] ? String(row[6]).trim() : '',
-        cccd: row[7] ? String(row[7]).trim() : '',
-        cccdDate: row[8] ? String(row[8]).trim() : '',
-        cccdPlace: row[9] ? String(row[9]).trim() : '',
-        phone: row[10] ? String(row[10]).trim() : '',
-        businessLines: row[11] ? String(row[11]).trim() : '',
-        mst: row[13] ? String(row[13]).trim() : '',
-        bLicenseNo: row[14] ? String(row[14]).trim() : '',
-        bLicenseBranch: row[15] ? String(row[15]).trim() : '',
-        bLicenseLoc: row[16] ? String(row[16]).trim() : '',
-        bLicenseDate: row[17] ? String(row[17]).trim() : '',
-        bLicensePlace: row[18] ? String(row[18]).trim() : '',
-        condCertNo: row[19] ? String(row[19]).trim() : '',
-        condCertDate: row[20] ? String(row[20]).trim() : '',
-        condCertPlace: row[21] ? String(row[21]).trim() : '',
-        condCertExp: row[22] ? String(row[22]).trim() : '',
-        pracLicenseNo: row[23] ? String(row[23]).trim() : '',
-        pracLicenseDate: row[24] ? String(row[24]).trim() : '',
-        pracLicensePlace: row[25] ? String(row[25]).trim() : '',
-        pracLicenseExp: row[26] ? String(row[26]).trim() : '',
-        otherLicenseName: row[27] ? String(row[27]).trim() : '',
-        otherLicenseNo: row[28] ? String(row[28]).trim() : '',
-        otherLicenseDate: row[29] ? String(row[29]).trim() : '',
-        otherLicensePlace: row[30] ? String(row[30]).trim() : '',
-        otherLicenseExp: row[31] ? String(row[31]).trim() : '',
-        fullAddress,
-        streetNo: row[33] ? String(row[33]).trim() : '',
-        hamlet: row[34] ? String(row[34]).trim() : '',
-        ward: row[35] ? String(row[35]).trim() : '',
-        surveyWeek: row[36] ? parseInt(row[36], 10) || null : null,
-        surveyType: row[37] ? String(row[37]).trim() : '',
-        officerArea: row[38] ? String(row[38]).trim() : '',
-        officerInput: row[39] ? String(row[39]).trim() : '',
-        industries: activeIndustries,
-        note: row[80] ? String(row[80]).trim() : '',
-        status: row[81] ? String(row[81]).trim() || 'Đang hoạt động' : 'Đang hoạt động',
-        team: team || 'Chưa phân đội'
-      });
+        const facilityType = String(row[1] || '').trim();
+        const signboardName = String(row[2] || '').trim();
+        const registeredName = String(row[3] || '').trim();
+        const representative = String(row[4] || '').trim();
+        const fullAddress = row[32] ? String(row[32]).trim() : '';
+
+        if (!registeredName && !representative && !fullAddress) continue;
+
+        const activeIndustries: string[] = [];
+        for (let c = 40; c < 80; c++) {
+          const val = row[c];
+          if (val && (String(val).toLowerCase() === 'x' || String(val) === '1' || val === true)) {
+            const indName = okData[0][c];
+            if (indName) activeIndustries.push(String(indName).trim());
+          }
+        }
+
+        facilities.push({
+          id: idCounter++,
+          stt: row[0] || (r - 1),
+          facilityType: facilityType.includes('Tổ chức') ? 'Tổ chức' : 'Cá nhân',
+          rawType: facilityType,
+          signboardName,
+          registeredName: registeredName || signboardName || '(Chưa có tên)',
+          representative,
+          position: String(row[5] || '').trim(),
+          birthDate: row[6] ? String(row[6]).trim() : '',
+          cccd: row[7] ? String(row[7]).trim() : '',
+          cccdDate: row[8] ? String(row[8]).trim() : '',
+          cccdPlace: row[9] ? String(row[9]).trim() : '',
+          phone: row[10] ? String(row[10]).trim() : '',
+          businessLines: row[11] ? String(row[11]).trim() : '',
+          mst: row[13] ? String(row[13]).trim() : '',
+          bLicenseNo: row[14] ? String(row[14]).trim() : '',
+          bLicenseBranch: row[15] ? String(row[15]).trim() : '',
+          bLicenseLoc: row[16] ? String(row[16]).trim() : '',
+          bLicenseDate: row[17] ? String(row[17]).trim() : '',
+          bLicensePlace: row[18] ? String(row[18]).trim() : '',
+          condCertNo: row[19] ? String(row[19]).trim() : '',
+          condCertDate: row[20] ? String(row[20]).trim() : '',
+          condCertPlace: row[21] ? String(row[21]).trim() : '',
+          condCertExp: row[22] ? String(row[22]).trim() : '',
+          pracLicenseNo: row[23] ? String(row[23]).trim() : '',
+          pracLicenseDate: row[24] ? String(row[24]).trim() : '',
+          pracLicensePlace: row[25] ? String(row[25]).trim() : '',
+          pracLicenseExp: row[26] ? String(row[26]).trim() : '',
+          otherLicenseName: row[27] ? String(row[27]).trim() : '',
+          otherLicenseNo: row[28] ? String(row[28]).trim() : '',
+          otherLicenseDate: row[29] ? String(row[29]).trim() : '',
+          otherLicensePlace: row[30] ? String(row[30]).trim() : '',
+          otherLicenseExp: row[31] ? String(row[31]).trim() : '',
+          fullAddress,
+          streetNo: row[33] ? String(row[33]).trim() : '',
+          hamlet: row[34] ? String(row[34]).trim() : '',
+          ward: row[35] ? String(row[35]).trim() : '',
+          surveyWeek: row[36] ? parseInt(row[36], 10) || null : null,
+          surveyType: row[37] ? String(row[37]).trim() : '',
+          officerArea: row[38] ? String(row[38]).trim() : '',
+          officerInput: row[39] ? String(row[39]).trim() : '',
+          industries: activeIndustries,
+          note: row[80] ? String(row[80]).trim() : '',
+          status: row[81] ? String(row[81]).trim() || 'Đang hoạt động' : 'Đang hoạt động',
+          team: team || 'Chưa phân đội'
+        });
+      }
     }
   }
 
