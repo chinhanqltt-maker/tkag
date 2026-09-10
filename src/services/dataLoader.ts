@@ -5,7 +5,7 @@ import weeklySummaryData from '../data/weeklySummary.json';
 import facilitiesAllData from '../data/facilitiesAll.json';
 
 const SPREADSHEET_ID = '1p9hd2pd_X85W76bLyj6iNifzTTQ7OXCV8bHAwCKbSEs';
-const STORAGE_KEY = 'TKAG_QLTT_DATA_V1';
+const STORAGE_KEY = 'TKAG_QLTT_DATA_V2';
 
 export interface AppDataStore {
   facilities: Facility[];
