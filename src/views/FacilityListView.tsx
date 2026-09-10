@@ -101,9 +101,9 @@ export const FacilityListView: React.FC<FacilityListViewProps> = ({
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300">
-              Sheet OK & D2-D12
+              11 Sheet Đội: D2 đến D12
             </span>
-            <span className="text-xs text-slate-500">Danh bạ tổng hợp 11.422+ cơ sở kinh doanh toàn tỉnh</span>
+            <span className="text-xs text-slate-500">Tổng hợp trực tiếp từ 11 Sheet Đội (11.489 cơ sở)</span>
           </div>
           <h2 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white mt-1">
             Tra Cứu & Quản Lý Hồ Sơ Cơ Sở Kinh Doanh
